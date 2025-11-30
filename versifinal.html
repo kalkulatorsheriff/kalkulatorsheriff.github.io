@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Undang-Undang Indopride</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* ==========================================================================
+           PALET WARNA & VARIABEL TEMA
+           ========================================================================== */
+        :root {
+            --accent-gold: #e5b84b; --accent-blue: #3b82f6; --accent-red: #ef4444;
+            --accent-green: #22c55e; --accent-silver: #cbd5e0;
+            --accent-purple: #8b5cf6;
+        }
+        :root, :root[data-theme="dark"] {
+            --bg-main: #1a202c; --bg-card-glass: rgba(45, 55, 72, 0.6);
+            --bg-input: #2d3748; --bg-hover: rgba(74, 85, 104, 0.4);
+            --border-color: rgba(74, 85, 104, 0.8); --border-hover: #718096;
+            --text-primary: #e2e8f0; --text-secondary: #a0aec0; --text-header: #ffffff;
+            --tag-bg: rgba(59, 130, 246, 0.2); --tag-text: #93c5fd; --tag-border: rgba(59, 130, 246, 0.3);
+            --bg-glow-blue: rgba(99, 179, 237, 0.15); --bg-glow-red: rgba(245, 101, 101, 0.1);
+            --accordion-active-bg: rgba(99, 179, 237, 0.1); --shadow-color: rgba(0, 0, 0, 0.2);
+            --checkbox-bg: #4a5568;
+            --checkbox-border: #4a5568;
+            --code-bg: #0f172a;
+            --modal-bg: rgba(26, 32, 44, 0.95);
+        }
+        :root[data-theme="light"] {
+            --bg-main: #f0f2f5; --bg-card-glass: rgba(255, 255, 255, 0.7);
+            --bg-input: #ffffff; --bg-hover: #e5e7eb; --border-color: #d1d5db;
+            --border-hover: #9ca3af; --text-primary: #1f2937; --text-secondary: #6b7280;
+            --text-header: #111827; --tag-bg: #dbeafe; --tag-text: #1d4ed8;
+            --tag-border: #bfdbfe; --bg-glow-blue: rgba(99, 179, 237, 0.2);
+            --bg-glow-red: rgba(245, 101, 101, 0.15); --accordion-active-bg: rgba(99, 179, 237, 0.15);
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --checkbox-bg: #ffffff;
+            --checkbox-border: var(--accent-blue);
+            --code-bg: #f3f4f6;
+             --modal-bg: rgba(255, 255, 255, 0.95);
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif; background-color: var(--bg-main);
+            color: var(--text-primary); -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale; overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        body::before, body::after {
+            content: ''; position: fixed; z-index: -1; border-radius: 50%;
+            filter: blur(120px); transition: background-color 0.5s ease;
+        }
+        body::before { width: 350px; height: 350px; background-color: var(--bg-glow-blue); top: -80px; left: -120px; }
+        body::after { width: 450px; height: 450px; background-color: var(--bg-glow-red); bottom: -120px; right: -180px; }
+        .card {
+            background-color: var(--bg-card-glass); backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px); border: 1px solid var(--border-color);
+            border-radius: 1rem; transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 6px -1px var(--shadow-color), 0 2px 4px -2px var(--shadow-color);
+        }
+        .main-title { font-size: clamp(2.25rem, 6vw, 3rem); }
+        .form-input {
+            background-color: var(--bg-input); border: 1px solid var(--border-color);
+            color: var(--text-primary); border-radius: 0.5rem; transition: all 0.2s ease-in-out;
+            width: 100%;
+        }
+        .form-input:focus { outline: none; border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4); }
+        .form-input::placeholder { color: var(--text-secondary); }
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; font-size: 0.875rem;
+            transition: all 0.2s ease-in-out; border: 1px solid transparent; cursor: pointer;
+            user-select: none;
+        }
+        .btn:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.1); }
+        .btn:active:not(:disabled) { transform: translateY(0) scale(0.97); box-shadow: none; }
+        .btn-green { background-color: var(--accent-green); color: #ffffff; border-color: var(--accent-green); box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-outline { background-color: transparent; color: var(--text-secondary); border-color: var(--border-color); }
+        .btn-outline:hover:not(:disabled) { background-color: var(--bg-hover); color: var(--text-primary); border-color: var(--border-hover); }
+        .btn-copy { background-color: var(--accent-blue); color: white; border-color: var(--accent-blue); }
+        
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .accordion-button.active + .accordion-content { max-height: 1500px; }
+        .accordion-button .fa-chevron-down { transition: transform 0.3s ease-in-out; }
+        .accordion-button.active .fa-chevron-down { transform: rotate(180deg); }
+        .accordion-button.active { background-color: var(--accordion-active-bg); }
+        .pasal-item:hover { background-color: var(--bg-hover); }
+        .pasal-item.checked { background-color: var(--accordion-active-bg); border-left: 4px solid var(--accent-blue); }
+        .pasal-item { border-left: 4px solid transparent; }
+        .custom-checkbox {
+            appearance: none; -webkit-appearance: none; background-color: var(--checkbox-bg);
+            border: 1px solid var(--checkbox-border); transition: background-color 0.2s, border-color 0.2s;
+            background-position: center; background-repeat: no-repeat;
+        }
+        .custom-checkbox:checked {
+            border-color: var(--accent-blue); background-color: var(--accent-blue);
+            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+        }
+        #dpo-checkbox:checked { background-color: var(--accent-gold); border-color: var(--accent-gold); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
+        .tag-pop-in { animation: popIn 0.3s ease-out forwards; }
+        @keyframes pulse-icon { 0% { transform: scale(1); } 50% { transform: scale(1.25); } 100% { transform: scale(1); } }
+        .is-pulsing { animation: pulse-icon 0.5s ease-in-out; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); } 20%, 40%, 60%, 80% { transform: translateX(5px); } }
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+
+        #copy-notification {
+            position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
+            background-color: var(--accent-green); color: white; padding: 12px 24px;
+            border-radius: 8px; z-index: 100; transition: bottom 0.4s ease-in-out;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+        }
+        #copy-notification.show { bottom: 30px; }
+
+        /* Code Block Styling - Clean version without scanlines */
+        .code-block {
+            background-color: var(--code-bg); border: 1px solid var(--border-color); border-radius: 0.5rem;
+            padding: 1rem; font-family: 'Courier New', Courier, monospace; font-size: 0.85rem;
+            color: var(--text-primary); white-space: pre-wrap; word-break: break-all;
+            width: 100%; resize: vertical; outline: none; transition: border-color 0.2s;
+        }
+        .code-block:focus { border-color: var(--accent-blue); }
+        .code-block-readonly { opacity: 0.8; cursor: text; }
+
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 50; background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(8px);
+            display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.open { opacity: 1; pointer-events: auto; }
+        .modal-content {
+            background-color: var(--modal-bg); border: 1px solid var(--border-color);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .modal-overlay.open .modal-content { transform: scale(1); }
+        .history-item { border-bottom: 1px solid var(--border-color); padding: 8px 0; }
+        .history-item:last-child { border-bottom: none; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl">
+        <!-- Header -->
+        <header class="relative text-center mb-8">
+            <h1 class="main-title font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[var(--accent-silver)] to-[var(--text-header)] tracking-tight">
+                Undang-Undang Indopride
+            </h1>
+            <p class="text-lg text-[var(--text-secondary)] mt-2">Sistem Kalkulator Pelanggaran Otomatis</p>
+            <div class="absolute top-0 right-0">
+                <button id="theme-toggle" class="p-2 rounded-full text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] transition-colors">
+                    <i class="fas fa-sun" id="theme-icon-sun"></i>
+                    <i class="fas fa-moon hidden" id="theme-icon-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Left Column: Input & Status -->
+            <div class="flex flex-col gap-6">
+                <!-- Result Display -->
+                <div class="card p-6 flex flex-col gap-6 fade-in relative overflow-hidden">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <span class="font-semibold text-[var(--accent-red)] flex items-center text-xs sm:text-sm"><i id="denda-icon" class="fa-solid fa-sack-dollar mr-2"></i>Denda Tertinggi</span>
+                            <span id="total-denda" class="text-2xl sm:text-3xl font-bold text-[var(--accent-red)] mt-1 block tracking-tight">$0</span>
+                        </div>
+                        <div>
+                            <span class="font-semibold text-[var(--accent-blue)] flex items-center text-xs sm:text-sm"><i id="kurungan-icon" class="fa-solid fa-gavel mr-2"></i>Total Kurungan</span>
+                            <span id="total-kurungan" class="text-2xl sm:text-3xl font-bold text-[var(--accent-blue)] mt-1 block tracking-tight">0 Bulan</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Calculation Details -->
+                    <div id="calculation-details" class="hidden pt-4 border-t border-[var(--border-color)]">
+                        <h3 class="font-semibold text-sm mb-2 text-[var(--text-header)]">Rincian Kalkulasi</h3>
+                        <div id="details-content" class="space-y-2 text-sm">
+                            <!-- JS will insert content here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Data Pelapor -->
+                <div class="card p-5 fade-in" style="animation-delay: 100ms;">
+                    <h2 class="text-md font-bold mb-3 text-[var(--text-header)] flex items-center">
+                        <i class="fas fa-user-edit mr-2 text-[var(--accent-blue)]"></i> Data Laporan
+                    </h2>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-xs font-medium text-[var(--text-secondary)] mb-1 block">Nama Tersangka</label>
+                            <input type="text" id="suspect-name" placeholder="Contoh: George Rizky" class="form-input px-3 py-2 text-sm uppercase">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-[var(--text-secondary)] mb-1 block">Nama Petugas</label>
+                            <input type="text" id="officer-name" placeholder="Contoh: Depsen 3 - Irfan" class="form-input px-3 py-2 text-sm uppercase">
+                        </div>
+                        
+                        <!-- DPO Only -->
+                        <div>
+                            <label for="dpo-checkbox" class="flex items-center cursor-pointer p-2 rounded bg-[var(--bg-input)] hover:bg-[var(--bg-hover)] transition-colors border border-[var(--border-color)] h-[42px]">
+                                <input type="checkbox" id="dpo-checkbox" class="custom-checkbox h-4 w-4 rounded text-[var(--accent-gold)] focus:ring-0">
+                                <span class="ml-2 font-semibold text-xs sm:text-sm text-[var(--accent-gold)]">Status DPO (x2)</span>
+                            </label>
+                        </div>
+
+                        <!-- Pasal Selection -->
+                        <div class="pt-2">
+                             <label class="text-xs font-medium text-[var(--text-secondary)] mb-1 block">Pasal Terpilih:</label>
+                            <div id="selected-pasal-tags" class="flex flex-wrap gap-1.5 min-h-[36px] p-2 bg-[var(--bg-input)] rounded-lg border border-[var(--border-color)] mb-2">
+                                <!-- JS will insert tags here -->
+                                <span class="text-[var(--text-secondary)] italic text-xs">Belum ada pasal dipilih.</span>
+                            </div>
+                            
+                            <!-- New Sheriff Text Output -->
+                            <div class="relative">
+                                <label class="text-[10px] font-bold text-[var(--text-secondary)] mb-1 block flex justify-between">
+                                    <span>KETERANGAN PASAL (SHERIFF)</span>
+                                    <button onclick="copyToClipboard('pasal-summary-output')" class="text-[var(--accent-blue)] hover:underline cursor-pointer">Salin</button>
+                                </label>
+                                <textarea id="pasal-summary-output" readonly class="code-block code-block-readonly text-[10px] h-20 uppercase font-mono bg-[var(--bg-input)]" placeholder="(SHERIFF)"></textarea>
+                            </div>
+                        </div>
+                         <button id="reset-button" class="btn btn-outline w-full text-xs"> <i class="fas fa-sync-alt mr-2"></i>Reset Semua Data </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Discord & Actions -->
+            <div class="flex flex-col gap-6">
+                <!-- Action Button -->
+                <div class="fade-in" style="animation-delay: 150ms;">
+                    <button id="open-pasal-btn" class="w-full btn btn-green py-4 text-lg shadow-lg group">
+                        <i class="fas fa-book-open mr-3 transition-transform group-hover:scale-110"></i> BUKA BUKU UNDANG-UNDANG
+                    </button>
+                    <p id="data-status-text" class="text-center text-xs text-[var(--text-secondary)] mt-2">Memuat data...</p>
+                </div>
+
+                <!-- Generator Laporan & History -->
+                <div class="card p-5 fade-in relative overflow-hidden" style="animation-delay: 200ms;">
+                    <!-- Tabs Header -->
+                    <div class="flex border-b border-[var(--border-color)] mb-4 overflow-x-auto">
+                        <button class="tab-btn px-4 py-2 text-xs font-bold text-[var(--text-header)] border-b-2 border-[var(--accent-blue)] transition-colors flex-shrink-0" data-target="panel-generator">
+                            KRIMINAL
+                        </button>
+                        <button class="tab-btn px-4 py-2 text-xs font-bold text-[var(--text-secondary)] border-b-2 border-transparent hover:text-[var(--text-primary)] transition-colors flex-shrink-0" data-target="panel-tilang">
+                            TILANG
+                        </button>
+                        <button class="tab-btn px-4 py-2 text-xs font-bold text-[var(--text-secondary)] border-b-2 border-transparent hover:text-[var(--text-primary)] transition-colors flex-shrink-0" data-target="panel-history">
+                            RIWAYAT
+                        </button>
+                    </div>
+
+                    <!-- Panel: Generator Kriminal -->
+                    <div id="panel-generator" class="tab-panel">
+                        <!-- Tab 1: Laporan Kriminal -->
+                        <div class="mb-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="text-xs font-bold text-[var(--text-secondary)]">CATATAN KRIMINAL</label>
+                                <button class="btn btn-copy py-1 px-3 text-xs" onclick="copyToClipboard('criminal-output')">
+                                    <i class="fas fa-copy mr-1"></i> Salin
+                                </button>
+                            </div>
+                            <textarea id="criminal-output" class="code-block text-xs h-32 uppercase" spellcheck="false"></textarea>
+                        </div>
+
+                        <!-- Tab 2: Barang Bukti (Combined) -->
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="text-xs font-bold text-[var(--text-secondary)]">DEPO BARANG BUKTI</label>
+                                <button class="btn btn-copy py-1 px-3 text-xs" onclick="copyToClipboard('evidence-combined')">
+                                    <i class="fas fa-copy mr-1"></i> Salin
+                                </button>
+                            </div>
+                            <textarea id="evidence-combined" class="code-block text-xs h-40 uppercase font-mono" spellcheck="false" placeholder="MASUKKAN BARANG BUKTI..."></textarea>
+                        </div>
+                    </div>
+
+                     <!-- Panel: Generator Tilang -->
+                     <div id="panel-tilang" class="tab-panel hidden">
+                        <div class="space-y-3 mb-4">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-xs font-medium text-[var(--text-secondary)] mb-1 block">Wilayah</label>
+                                    <input type="text" id="traffic-location" placeholder="Contoh: POM ROXWOOD" class="form-input px-3 py-2 text-xs uppercase">
+                                </div>
+                                <div>
+                                    <label class="text-xs font-medium text-[var(--text-secondary)] mb-1 block">Jam</label>
+                                    <input type="text" id="traffic-time" placeholder="Contoh: 15.30" class="form-input px-3 py-2 text-xs uppercase">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="text-xs font-bold text-[var(--text-secondary)]">BUKTI PENILANGAN</label>
+                                <button class="btn btn-copy py-1 px-3 text-xs" onclick="copyToClipboard('traffic-output')">
+                                    <i class="fas fa-copy mr-1"></i> Salin
+                                </button>
+                            </div>
+                            <textarea id="traffic-output" class="code-block text-xs h-40 uppercase" spellcheck="false"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Panel: History -->
+                    <div id="panel-history" class="tab-panel hidden h-[300px] overflow-y-auto pr-1">
+                        <div id="history-list" class="space-y-2 text-xs">
+                             <p class="text-[var(--text-secondary)] italic text-center mt-10">Belum ada riwayat laporan.</p>
+                        </div>
+                         <button id="clear-history-btn" class="text-[var(--accent-red)] text-xs mt-4 hover:underline w-full text-center">Hapus Riwayat</button>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+        <footer class="text-center mt-12 py-6 border-t border-[var(--border-color)] text-sm text-[var(--text-secondary)]">
+            <p class="mb-2">Dibuat oleh <span class="font-semibold text-[var(--text-primary)]">Edwin A. Lewis</span> | Kontak: <span class="font-medium text-[var(--text-primary)]">.keturon</span> <i class="fa-brands fa-discord text-[var(--accent-blue)]"></i></p>
+            <p class="italic text-xs mt-2">Penafian: Kalkulator ini adalah alat bantu simulasi dan tidak menggantikan keputusan hukum yang sah.</p>
+        </footer>
+    </div>
+    
+    <!-- MODAL PASAL -->
+    <div id="pasal-modal" class="modal-overlay">
+        <div class="modal-content w-full max-w-3xl rounded-xl flex flex-col max-h-[85vh]">
+            <!-- Modal Header -->
+            <div class="p-4 border-b border-[var(--border-color)] flex justify-between items-center bg-[var(--bg-card-glass)]">
+                <h3 class="text-lg font-bold text-[var(--text-header)]"><i class="fas fa-gavel mr-2 text-[var(--accent-gold)]"></i>Database Pasal</h3>
+                <button id="close-modal-btn" class="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Search Bar (Sticky) -->
+            <div class="p-4 bg-[var(--bg-main)]">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-4"> <i class="fas fa-search text-[var(--text-secondary)]"></i> </span>
+                    <input type="text" id="searchInput" placeholder="Cari pasal berdasarkan deskripsi atau ID..." class="w-full px-4 py-3 pl-12 form-input shadow-md">
+                </div>
+            </div>
+
+            <!-- List Pasal (Scrollable) -->
+            <div id="pasal-list" class="p-4 overflow-y-auto space-y-2 bg-[var(--bg-main)] flex-grow">
+                <!-- Pasal list will be dynamically inserted here -->
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="p-4 border-t border-[var(--border-color)] bg-[var(--bg-card-glass)] flex justify-between items-center text-xs text-[var(--text-secondary)] rounded-b-xl">
+                <span>Klik pasal untuk memilih/menghapus.</span>
+                <button id="close-modal-bottom-btn" class="btn btn-outline px-6 py-2">Selesai</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="copy-notification"> <i class="fas fa-check-circle mr-2"></i>Teks berhasil disalin! </div>
+
+    <script>
+    // --- GANTI URL DI BAWAH INI DENGAN LINK RAW GITHUB ANDA ---
+    const PASAL_DATA_URL = 'https://raw.githubusercontent.com/mdtsheriff/mdtsheriff.github.io/refs/heads/main/data_pasal.json'; 
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- SOUND ENGINE ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const playSound = (type) => {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode); gainNode.connect(audioCtx.destination);
+            if (type === 'click') { oscillator.type = 'sine'; oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); oscillator.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1); gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1); oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.1); }
+            else if (type === 'select') { oscillator.type = 'triangle'; oscillator.frequency.setValueAtTime(600, audioCtx.currentTime); gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1); oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.1); }
+            else if (type === 'success') { oscillator.type = 'sine'; oscillator.frequency.setValueAtTime(500, audioCtx.currentTime); oscillator.frequency.linearRampToValueAtTime(1000, audioCtx.currentTime + 0.1); gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3); oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.3); }
+            else if (type === 'error') { oscillator.type = 'sawtooth'; oscillator.frequency.setValueAtTime(150, audioCtx.currentTime); oscillator.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.1); gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2); oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.2); }
+            else if (type === 'open') { oscillator.type = 'sine'; oscillator.frequency.setValueAtTime(200, audioCtx.currentTime); oscillator.frequency.linearRampToValueAtTime(400, audioCtx.currentTime + 0.2); gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime); gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2); oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.2); }
+        };
+
+        // --- DATA ---
+        let pasalData = {}; 
+        let allPasal = [];
+        let selectedPasalIds = new Set();
+        let expandedCategories = new Set();
+        let maxFineGlobal = 0;
+        let reportHistory = JSON.parse(localStorage.getItem('police_calculator_history')) || [];
+
+        const dom = {
+            html: document.documentElement, themeToggle: document.getElementById('theme-toggle'),
+            themeIconSun: document.getElementById('theme-icon-sun'), themeIconMoon: document.getElementById('theme-icon-moon'),
+            totalDenda: document.getElementById('total-denda'), dendaIcon: document.getElementById('denda-icon'),
+            totalKurungan: document.getElementById('total-kurungan'), kurunganIcon: document.getElementById('kurungan-icon'),
+            searchInput: document.getElementById('searchInput'), pasalListContainer: document.getElementById('pasal-list'),
+            selectedTagsContainer: document.getElementById('selected-pasal-tags'),
+            dpoCheckbox: document.getElementById('dpo-checkbox'), 
+            resetButton: document.getElementById('reset-button'),
+            calculationDetails: document.getElementById('calculation-details'), detailsContent: document.getElementById('details-content'),
+            suspectName: document.getElementById('suspect-name'), officerName: document.getElementById('officer-name'),
+            criminalOutput: document.getElementById('criminal-output'), 
+            evidenceCombined: document.getElementById('evidence-combined'),
+            pasalSummaryOutput: document.getElementById('pasal-summary-output'),
+            discordCard: document.querySelector('.card.terminal-box:last-of-type'),
+            pasalModal: document.getElementById('pasal-modal'), openPasalBtn: document.getElementById('open-pasal-btn'),
+            closeModalBtn: document.getElementById('close-modal-btn'), closeModalBottomBtn: document.getElementById('close-modal-bottom-btn'),
+            historyList: document.getElementById('history-list'), clearHistoryBtn: document.getElementById('clear-history-btn'),
+            tabBtns: document.querySelectorAll('.tab-btn'), tabPanels: document.querySelectorAll('.tab-panel'),
+            dataStatusText: document.getElementById('data-status-text'),
+            trafficLocation: document.getElementById('traffic-location'),
+            trafficTime: document.getElementById('traffic-time'),
+            trafficOutput: document.getElementById('traffic-output')
+        };
+
+        // --- FETCH DATA ---
+        async function loadData() {
+            dom.dataStatusText.textContent = "Menghubungkan ke database...";
+            try {
+                const response = await fetch(PASAL_DATA_URL);
+                if (!response.ok) throw new Error("Network response was not ok");
+                pasalData = await response.json();
+                dom.dataStatusText.textContent = "Database terhubung.";
+                dom.dataStatusText.classList.add('text-[var(--accent-green)]');
+            } catch (error) {
+                console.error("Gagal memuat data pasal:", error);
+                // Fallback hardcoded
+                pasalData = {
+                    "Info": [{"id": "0", "desc": "Gagal memuat data online. Silakan cek koneksi/URL.", "denda":0, "penjara":0}]
+                };
+                dom.dataStatusText.textContent = "Gagal memuat data.";
+                dom.dataStatusText.classList.add('text-orange-400');
+            }
+            allPasal = Object.values(pasalData).flat();
+            renderPasalList();
+            renderSelectedTags();
+        }
+
+        // --- THEME & HELPERS ---
+        const applyTheme = (theme) => {
+            dom.html.setAttribute('data-theme', theme);
+            dom.themeIconSun.classList.toggle('hidden', theme === 'light');
+            dom.themeIconMoon.classList.toggle('hidden', theme !== 'light');
+        };
+        const toggleTheme = () => {
+            playSound('click');
+            const newTheme = (dom.html.getAttribute('data-theme') || 'dark') === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+        };
+        const toggleModal = (show) => {
+            if (show) { dom.pasalModal.classList.add('open'); dom.searchInput.focus(); playSound('open'); } 
+            else { dom.pasalModal.classList.remove('open'); playSound('click'); }
+        };
+        const padText = (label, value) => {
+            const paddingLength = 14; 
+            return `${label.padEnd(paddingLength, ' ')}: ${value}`;
+        }
+        const getTodayDate = () => {
+            const today = new Date();
+            return `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
+        };
+
+        // --- CALCULATIONS ---
+        const animateCountUp = (element, endValue, isCurrency) => {
+            const startValue = parseInt(element.textContent.replace(/\$|\.|,| Bulan/g, '')) || 0;
+            if (startValue === endValue) return;
+            const duration = 500; let startTime = null;
+            const icon = isCurrency ? dom.dendaIcon : dom.kurunganIcon;
+            icon.classList.add('is-pulsing');
+            icon.addEventListener('animationend', () => icon.classList.remove('is-pulsing'), { once: true });
+            const step = (timestamp) => {
+                if (!startTime) startTime = timestamp;
+                const progress = Math.min((timestamp - startTime) / duration, 1);
+                const currentValue = Math.floor(progress * (endValue - startValue) + startValue);
+                element.textContent = isCurrency ? `$${currentValue.toLocaleString('id-ID')}` : `${currentValue} Bulan`;
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
+        };
+        
+        const renderPasalList = (filter = '') => {
+            dom.pasalListContainer.innerHTML = '';
+            const filterLower = filter.toLowerCase().trim();
+            Object.entries(pasalData).forEach(([category, pasalInCategory]) => {
+                const filteredPasal = filter ? pasalInCategory.filter(p => p.desc.toLowerCase().includes(filterLower) || p.id.includes(filterLower)) : pasalInCategory;
+                if (filteredPasal.length === 0) return;
+                const isExpanded = filter ? true : expandedCategories.has(category);
+                
+                const categoryHtml = `
+                    <div class="bg-[var(--bg-input)] rounded-lg border border-[var(--border-color)] overflow-hidden">
+                        <button class="accordion-button w-full flex justify-between items-center p-4 text-left font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors duration-200 ${isExpanded ? 'active' : ''}" data-category="${category}">
+                            <span>${category}</span><i class="fas fa-chevron-down text-[var(--text-secondary)]"></i>
+                        </button>
+                        <div class="accordion-content" style="max-height: ${isExpanded ? '1500px' : '0'};">
+                            <div class="p-2 space-y-1">
+                            ${filteredPasal.map(pasal => {
+                                const isChecked = selectedPasalIds.has(pasal.id);
+                                return `
+                                <div class="pasal-item p-3 rounded-md transition-all duration-200 cursor-pointer flex items-center justify-between ${isChecked ? 'checked' : ''}" data-pasal-id="${pasal.id}">
+                                    <div class="flex items-center flex-grow mr-4">
+                                        <input type="checkbox" class="custom-checkbox pasal-checkbox h-5 w-5 rounded mr-4 flex-shrink-0" ${isChecked ? 'checked' : ''} data-pasal-id="${pasal.id}">
+                                        <div class="text-sm">
+                                            <span class="font-bold text-[var(--text-primary)] pasal-id-text">Pasal ${pasal.id}:</span>
+                                            <span class="text-[var(--text-secondary)]">${pasal.desc}</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-right text-sm flex-shrink-0">
+                                        <p class="text-[var(--accent-red)] font-medium">$${(pasal.denda||0).toLocaleString('id-ID')}</p>
+                                        <p class="text-[var(--accent-blue)] font-medium">${pasal.penjara > 0 ? `${pasal.penjara} Bln` : (pasal.hukumanLain || '-')}</p>
+                                    </div>
+                                </div>`;
+                            }).join('')}
+                            </div>
+                        </div>
+                    </div>`;
+                dom.pasalListContainer.insertAdjacentHTML('beforeend', categoryHtml);
+            });
+        };
+
+        const renderSelectedTags = () => {
+            if (selectedPasalIds.size === 0) {
+                dom.selectedTagsContainer.innerHTML = `<span class="text-[var(--text-secondary)] italic text-xs">Belum ada pasal dipilih.</span>`;
+                return;
+            }
+            dom.selectedTagsContainer.innerHTML = '';
+            selectedPasalIds.forEach(pasalId => {
+                const pasal = allPasal.find(p => p.id === pasalId);
+                if (!pasal) return;
+                const tag = document.createElement('div');
+                tag.className = 'flex items-center text-xs font-semibold px-2 py-1 rounded-full border tag-pop-in';
+                tag.style.cssText = `background-color: var(--tag-bg); color: var(--tag-text); border-color: var(--tag-border);`;
+                tag.innerHTML = `<span>PASAL ${pasal.id}</span><button data-pasal-id="${pasal.id}" class="remove-tag-btn ml-2 text-[var(--tag-text)] hover:text-[var(--text-primary)] text-lg leading-none -mr-1">&times;</button>`;
+                dom.selectedTagsContainer.appendChild(tag);
+            });
+        };
+
+        const calculateTotals = () => {
+            let maxDenda = 0;
+            let pasalDendaTertinggi = null;
+            let totalKurunganRaw = 0;
+
+            selectedPasalIds.forEach(pasalId => {
+                const pasal = allPasal.find(p => p.id === pasalId);
+                if (pasal) {
+                    if ((pasal.denda || 0) > maxDenda) { maxDenda = pasal.denda; pasalDendaTertinggi = pasal; }
+                    totalKurunganRaw += pasal.penjara || 0;
+                }
+            });
+            maxFineGlobal = maxDenda;
+            
+            const isDPO = dom.dpoCheckbox.checked;
+            let totalKurunganDPO = isDPO ? totalKurunganRaw * 2 : totalKurunganRaw;
+            let finalKurungan = Math.min(Math.ceil(totalKurunganDPO), 60);
+
+            animateCountUp(dom.totalDenda, maxDenda, true);
+            animateCountUp(dom.totalKurungan, finalKurungan, false);
+            updateCalculationDetails(maxDenda, pasalDendaTertinggi, totalKurunganRaw, isDPO, finalKurungan);
+        };
+        
+        const updateCalculationDetails = (denda, pasalDenda, kurunganRaw, isDPO, kurunganFinal) => {
+            if (selectedPasalIds.size === 0) { dom.calculationDetails.classList.add('hidden'); return; }
+            dom.calculationDetails.classList.remove('hidden');
+            let detailsHtml = '';
+            detailsHtml += `<div class="flex items-center"><i class="fas fa-file-invoice-dollar w-5 text-center mr-3 text-[var(--accent-red)]"></i>
+                <div class="flex-grow"><div class="text-[var(--text-primary)]">Total Denda</div><div class="text-[10px] text-[var(--text-secondary)]">Pasal Tertinggi: ${pasalDenda ? pasalDenda.id : 'N/A'}</div></div>
+                <div class="font-mono font-semibold text-[var(--text-primary)]">$${denda.toLocaleString('id-ID')}</div></div>`;
+            if (isDPO) {
+                 detailsHtml += `<div class="flex items-center"><i class="fas fa-user-secret w-5 text-center mr-3 text-[var(--accent-gold)]"></i>
+                    <div class="flex-grow"><div class="text-[var(--text-primary)]">Status DPO</div><div class="text-[10px] text-[var(--text-secondary)]">Hukuman (x2)</div></div>
+                    <div class="font-mono font-semibold text-[var(--accent-gold)]">AKTIF</div></div>`;
+            }
+            detailsHtml += `<div class="flex items-center"><i class="fas fa-layer-group w-5 text-center mr-3 text-[var(--accent-blue)]"></i>
+                <div class="flex-grow"><div class="text-[var(--text-primary)]">Total Kurungan</div><div class="text-[10px] text-[var(--text-secondary)]">Max 60 Bulan</div></div>
+                <div class="font-mono font-semibold text-[var(--text-primary)]">${kurunganFinal} Bln</div></div>`;
+            dom.detailsContent.innerHTML = detailsHtml;
+        };
+
+        const updateEvidenceBox = () => {
+            const suspectName = dom.suspectName.value.toUpperCase() || '...';
+            const footerText = `REASON: SITAAN A/N ${suspectName}`;
+            
+            const currentContent = dom.evidenceCombined.value;
+            // Split content to separate items from footer
+            // We look for the last occurrence of "REASON:"
+            const lines = currentContent.split('\n');
+            let newLines = [];
+            let footerFound = false;
+
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].trim().startsWith("REASON:")) {
+                    // Skip old footer
+                    footerFound = true;
+                } else {
+                    if (!footerFound || lines[i].trim() !== "") {
+                       newLines.push(lines[i]);
+                    }
+                }
+            }
+            
+            // Reassemble
+            let body = newLines.join('\n').trim();
+            // Ensure gap
+            dom.evidenceCombined.value = body + (body ? "\n\n" : "") + footerText;
+        };
+
+        const generatePasalSummary = () => {
+            const descriptions = Array.from(selectedPasalIds).map(id => {
+                const p = allPasal.find(x => x.id === id);
+                return p ? p.desc.toUpperCase() : '';
+            }).filter(Boolean);
+            
+            const summary = descriptions.length > 0 ? descriptions.join(', ') + ' (SHERIFF)' : '(SHERIFF)';
+            dom.pasalSummaryOutput.value = summary;
+        };
+
+        const generateDiscordReport = () => {
+            const suspect = dom.suspectName.value.toUpperCase() || '...';
+            const officer = dom.officerName.value.toUpperCase() || '...';
+            const date = getTodayDate();
+            const currentDenda = parseInt(dom.totalDenda.textContent.replace(/\$|\.|,/g, '')) || 0;
+            
+            const kasusList = Array.from(selectedPasalIds).map(id => {
+                const p = allPasal.find(x => x.id === id);
+                return p ? p.desc.toUpperCase() : '';
+            }).filter(Boolean);
+            const kasusString = kasusList.length > 0 ? kasusList.join(', ') : '...';
+
+            let criminalText = `${padText("NAMA", suspect)}\n`;
+            criminalText += `${padText("KASUS", kasusString)}\n`;
+            criminalText += `${padText("DENDA TERTINGGI", currentDenda.toLocaleString('id-ID'))}\n`;
+            criminalText += `${padText("TANGGAL", date)}\n`;
+            criminalText += `${padText("PETUGAS", officer)}`;
+
+            dom.criminalOutput.value = criminalText;
+        };
+
+        const generateTrafficReport = () => {
+            const suspect = dom.suspectName.value.toUpperCase() || '...';
+            const wilayah = dom.trafficLocation.value.toUpperCase() || '...';
+            const jam = dom.trafficTime.value.toUpperCase() || '...';
+            const date = getTodayDate();
+            const officer = dom.officerName.value.toUpperCase() || '...';
+
+            const kasusList = Array.from(selectedPasalIds).map(id => {
+                const p = allPasal.find(x => x.id === id);
+                return p ? p.desc.toUpperCase() : '';
+            }).filter(Boolean);
+            const kasusString = kasusList.length > 0 ? kasusList.join(', ') : '...';
+
+            let trafficText = `${padText("NAMA", suspect)}\n`;
+            trafficText += `${padText("WILAYAH", wilayah)}\n`;
+            trafficText += `${padText("JAM", jam)}\n`;
+            trafficText += `${padText("TANGGAL", date)}\n`;
+            trafficText += `${padText("KASUS", kasusString)}\n`;
+            trafficText += `${padText("PETUGAS", officer)}`;
+
+            dom.trafficOutput.value = trafficText;
+        };
+
+        // --- History Logic ---
+        const renderHistory = () => {
+            if (reportHistory.length === 0) {
+                dom.historyList.innerHTML = `<p class="text-[var(--text-secondary)] italic text-center mt-10">Belum ada riwayat laporan.</p>`;
+                dom.clearHistoryBtn.classList.add('hidden');
+                return;
+            }
+            dom.clearHistoryBtn.classList.remove('hidden');
+            dom.historyList.innerHTML = reportHistory.map((item, index) => `
+                <div class="history-item flex justify-between items-start">
+                    <div class="flex-grow">
+                        <div class="font-bold text-[var(--accent-blue)]">${item.suspect}</div>
+                        <div class="text-[10px] text-[var(--text-secondary)]">${item.date} - ${item.officer}</div>
+                        <div class="text-[10px] text-[var(--text-primary)] mt-1 truncate w-48">${item.kasus}</div>
+                    </div>
+                    <button class="text-[var(--text-secondary)] hover:text-[var(--accent-green)] transition-colors p-2" onclick="restoreHistory(${index})">
+                        <i class="fas fa-history"></i>
+                    </button>
+                </div>
+            `).join('');
+        };
+
+        const saveToHistory = () => {
+            const suspect = dom.suspectName.value.toUpperCase();
+            if (!suspect || selectedPasalIds.size === 0) return;
+
+            const newItem = {
+                suspect: suspect,
+                officer: dom.officerName.value.toUpperCase(),
+                date: getTodayDate(),
+                kasus: Array.from(selectedPasalIds).map(id => allPasal.find(x => x.id === id)?.desc).join(', '),
+                pasalIds: Array.from(selectedPasalIds),
+                dpo: dom.dpoCheckbox.checked
+            };
+
+            if (reportHistory.length > 0 && JSON.stringify(reportHistory[0]) === JSON.stringify(newItem)) return;
+
+            reportHistory.unshift(newItem);
+            if (reportHistory.length > 10) reportHistory.pop(); 
+            localStorage.setItem('police_calculator_history', JSON.stringify(reportHistory));
+            renderHistory();
+        };
+
+        window.restoreHistory = (index) => {
+            const item = reportHistory[index];
+            if (!item) return;
+            
+            dom.suspectName.value = item.suspect;
+            dom.officerName.value = item.officer;
+            dom.dpoCheckbox.checked = item.dpo;
+            
+            selectedPasalIds = new Set(item.pasalIds);
+            
+            updateUI();
+            playSound('success');
+            dom.tabBtns[0].click();
+        };
+
+        // --- Event Handlers & Init ---
+        const updateUI = () => {
+            calculateTotals();
+            renderSelectedTags();
+            generatePasalSummary();
+            generateDiscordReport();
+            generateTrafficReport();
+            updateEvidenceBox(); // Update the combined box footer
+            
+            dom.pasalListContainer.querySelectorAll('.pasal-item').forEach(item => {
+                const isChecked = selectedPasalIds.has(item.dataset.pasalId);
+                item.classList.toggle('checked', isChecked);
+                const checkbox = item.querySelector('.pasal-checkbox');
+                if (checkbox) checkbox.checked = isChecked;
+            });
+        };
+
+        window.copyToClipboard = (elementId) => {
+            const el = document.getElementById(elementId);
+            const rawText = el.value || el.innerText;
+
+            if (!rawText.trim() || (rawText.includes("...") && elementId !== 'evidence-combined' && elementId !== 'pasal-summary-output')) {
+                 playSound('error');
+                 const discordCard = document.querySelector('.card.terminal-box:last-of-type') || dom.discordCard;
+                 if(discordCard) {
+                    discordCard.classList.remove('shake');
+                    void discordCard.offsetWidth;
+                    discordCard.classList.add('shake');
+                 }
+                 return;
+            }
+            
+            // Add markdown wrapping only for reports, not for simple text fields unless desired
+            // The prompt requested markdown format for reports.
+            let textToCopy = rawText;
+            if (elementId === 'criminal-output' || elementId === 'traffic-output' || elementId === 'evidence-combined') {
+                 textToCopy = "```\n" + rawText + "\n```";
+            }
+
+            const textArea = document.createElement("textarea");
+            textArea.value = textToCopy;
+            textArea.style.position = "fixed"; textArea.style.left = "-9999px";
+            document.body.appendChild(textArea);
+            textArea.focus(); textArea.select();
+            try { 
+                document.execCommand('copy'); 
+                playSound('success'); 
+                document.getElementById('copy-notification').classList.add('show'); 
+                setTimeout(() => document.getElementById('copy-notification').classList.remove('show'), 2500); 
+                
+                if (elementId === 'criminal-output' || elementId === 'traffic-output') saveToHistory();
+            } 
+            catch (err) { console.error('Gagal menyalin: ', err); }
+            document.body.removeChild(textArea);
+        };
+
+        const handlePasalClick = (pasalId) => {
+            if (selectedPasalIds.has(pasalId)) { selectedPasalIds.delete(pasalId); playSound('click'); } 
+            else { selectedPasalIds.add(pasalId); playSound('select'); }
+            updateUI();
+        };
+
+        const resetAll = () => {
+            playSound('error');
+            selectedPasalIds.clear();
+            expandedCategories = new Set();
+            dom.dpoCheckbox.checked = false;
+            dom.suspectName.value = '';
+            dom.officerName.value = '';
+            dom.evidenceCombined.value = '\n\nREASON: SITAAN A/N ...'; // Reset to default footer
+            dom.searchInput.value = '';
+            dom.trafficLocation.value = '';
+            dom.trafficTime.value = '';
+            renderPasalList(); 
+            updateUI();
+        };
+
+        // --- LISTENERS ---
+        dom.themeToggle.addEventListener('click', toggleTheme);
+        dom.openPasalBtn.addEventListener('click', () => toggleModal(true));
+        dom.closeModalBtn.addEventListener('click', () => toggleModal(false));
+        dom.closeModalBottomBtn.addEventListener('click', () => toggleModal(false));
+        dom.pasalModal.addEventListener('click', (e) => { if (e.target === dom.pasalModal) toggleModal(false); });
+        dom.searchInput.addEventListener('input', () => { renderPasalList(dom.searchInput.value); playSound('click'); });
+        dom.dpoCheckbox.addEventListener('change', () => { updateUI(); playSound('select'); });
+        dom.resetButton.addEventListener('click', resetAll);
+        
+        // Auto update reports on input
+        dom.suspectName.addEventListener('input', updateUI);
+        dom.officerName.addEventListener('input', updateUI);
+        dom.trafficLocation.addEventListener('input', updateUI);
+        dom.trafficTime.addEventListener('input', updateUI);
+
+        dom.selectedTagsContainer.addEventListener('click', (e) => { const target = e.target.closest('.remove-tag-btn'); if (target) handlePasalClick(target.dataset.pasalId); });
+        dom.pasalListContainer.addEventListener('click', (e) => {
+            const pasalItem = e.target.closest('.pasal-item');
+            const accordionButton = e.target.closest('.accordion-button');
+            if (e.target.matches('.pasal-checkbox')) handlePasalClick(e.target.dataset.pasalId);
+            else if (pasalItem) handlePasalClick(pasalItem.dataset.pasalId);
+            else if (accordionButton) {
+                const category = accordionButton.dataset.category;
+                const content = accordionButton.nextElementSibling;
+                accordionButton.classList.toggle('active');
+                const isExpanded = accordionButton.classList.contains('active');
+                content.style.maxHeight = isExpanded ? '1500px' : '0';
+                isExpanded ? expandedCategories.add(category) : expandedCategories.delete(category);
+                playSound('click');
+            }
+        });
+        dom.clearHistoryBtn.addEventListener('click', () => {
+            reportHistory = [];
+            localStorage.removeItem('police_calculator_history');
+            renderHistory();
+            playSound('error');
+        });
+        dom.tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = btn.dataset.target;
+                dom.tabBtns.forEach(b => {
+                    b.classList.remove('text-[var(--text-header)]', 'border-[var(--accent-blue)]');
+                    b.classList.add('text-[var(--text-secondary)]', 'border-transparent');
+                });
+                btn.classList.remove('text-[var(--text-secondary)]', 'border-transparent');
+                btn.classList.add('text-[var(--text-header)]', 'border-[var(--accent-blue)]');
+                
+                dom.tabPanels.forEach(p => p.classList.add('hidden'));
+                document.getElementById(target).classList.remove('hidden');
+                playSound('click');
+            });
+        });
+
+        // --- INITIAL LOAD ---
+        applyTheme(localStorage.getItem('theme') || 'dark');
+        loadData(); 
+    });
+    </script>
+</body>
+</html>

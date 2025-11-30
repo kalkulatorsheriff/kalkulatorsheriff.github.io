@@ -1,0 +1,63 @@
+{
+  "Pelanggaran Ringan": [
+    { "id": "1.1", "desc": "Tidak Membawa Kartu Identitas", "denda": 15000, "penjara": 5 },
+    { "id": "1.2", "desc": "Penganiayaan / Melukai Warga", "denda": 5000, "penjara": 5 },
+    { "id": "1.3", "desc": "Penghinaan Terhadap Warga", "denda": 10000, "penjara": 5 },
+    { "id": "1.4", "desc": "Mengganggu Ketertiban Umum / Provokator", "denda": 5000, "penjara": 5 },
+    { "id": "1.5", "desc": "Membawa Minuman Beralkohol", "denda": 2500, "penjara": 5 },
+    { "id": "1.6", "desc": "Telanjang / Memakai Topeng Di Area Publik", "denda": 10000, "penjara": 5 },
+    { "id": "1.7", "desc": "Penipuan / Memberikan Informasi Palsu", "denda": 20000, "penjara": 5 },
+    { "id": "1.8", "desc": "Mabuk di Area Publik / Mabuk Saat Mengemudi", "denda": 15000, "penjara": 5 },
+    { "id": "1.9", "desc": "Pencemaran Nama Baik / Perbuatan Tidak Menyenangkan", "denda": 10000, "penjara": 5 },
+    { "id": "1.10", "desc": "Mencuri / Merusak Kendaraan", "denda": 20000, "penjara": 5 },
+    { "id": "1.11", "desc": "Perjudian / Taruhan", "denda": 15000, "penjara": 5 },
+    { "id": "1.12", "desc": "Pembobolan / Pencurian Rumah", "denda": 50000, "penjara": 10 }
+  ],
+  "Pelanggaran Sedang": [
+    { "id": "2.1", "desc": "Upaya Korupsi / Melawan Petugas / Menghilangkan Barang Bukti", "denda": 25000, "penjara": 10 },
+    { "id": "2.2", "desc": "Penyalahgunaan Atribut Kepolisian", "denda": 50000, "penjara": 20 },
+    { "id": "2.3", "desc": "Berada di Zona Merah / Zona Terlarang", "denda": 10000, "penjara": 5 },
+    { "id": "2.4", "desc": "Kepemilikan Barang Ilegal Ringan <50", "denda": 10000, "penjara": 5 },
+    { "id": "2.5", "desc": "Kepemilikan Barang Ilegal Ringan 50 - 168", "denda": 25000, "penjara": 5 },
+    { "id": "2.6", "desc": "Kepemilikan Barang Ilegal Ringan >168", "denda": 50000, "penjara": 10 },
+    { "id": "2.7", "desc": "Kepemilikan Barang Ilegal Berat <14", "denda": 50000, "penjara": 5 },
+    { "id": "2.8", "desc": "Kepemilikan Barang Ilegal Berat 14 - 70", "denda": 75000, "penjara": 8 },
+    { "id": "2.9", "desc": "Kepemilikan Barang Ilegal Berat >70", "denda": 100000, "penjara": 10 },
+    { "id": "2.10", "desc": "Kepemilikan Uang Kotor <500.000", "denda": 25000, "penjara": 5 },
+    { "id": "2.11", "desc": "Kepemilikan Uang Kotor 500.000 - 1.000.000", "denda": 50000, "penjara": 8 },
+    { "id": "2.12", "desc": "Kepemilikan Uang Kotor >1.000.000", "denda": 100000, "penjara": 10 },
+    { "id": "2.13", "desc": "Penyalahgunaan Barang Ilegal (Pemakai / Pecandu)", "denda": 25000, "penjara": 15 },
+    { "id": "2.14", "desc": "Tidak Memiliki Lisensi Senjata", "denda": 25000, "penjara": 5 }
+  ],
+  "Pelanggaran Berat": [
+    { "id": "3.1", "desc": "Upaya Pembunuhan Terhadap Warga", "denda": 15000, "penjara": 5 },
+    { "id": "3.2", "desc": "Jual Beli Barang / Senjata Ilegal (Pengedar)", "denda": 50000, "penjara": 30 },
+    { "id": "3.3", "desc": "Pembunuhan Terhadap Warga", "denda": 100000, "penjara": 25 },
+    { "id": "3.4", "desc": "Penodongan / Pembegalan Terhadap Warga", "denda": 5000, "penjara": 10 },
+    { "id": "3.5", "desc": "Penodongan / Pembegalan Terhadap Petugas", "denda": 10000, "penjara": 10 },
+    { "id": "3.6", "desc": "Kepemilikan Senjata Ilegal", "denda": 50000, "penjara": 5 },
+    { "id": "3.7", "desc": "Penyanderaan / Penculikan Warga", "denda": 100000, "penjara": 15 },
+    { "id": "3.8", "desc": "Kejahatan Tidak Disengaja", "denda": 25000, "penjara": 5 },
+    { "id": "3.9", "desc": "Penembakan Terhadap Warga", "denda": 50000, "penjara": 10 },
+    { "id": "3.10", "desc": "Penembakan Terhadap Petugas", "denda": 100000, "penjara": 10 },
+    { "id": "3.11", "desc": "Perampokan di Warung", "denda": 75000, "penjara": 10 },
+    { "id": "3.12", "desc": "Perampokan di Bank / Jewelry", "denda": 100000, "penjara": 15 },
+    { "id": "3.13", "desc": "Pembocoran Informasi / Rahasia Negara", "denda": 150000, "penjara": 30 },
+    { "id": "3.14", "desc": "Kepemilikan Senjata Negara", "denda": 500000, "penjara": 15 },
+    { "id": "3.15", "desc": "Penyalahgunaan Teknologi", "denda": 50000, "penjara": 20 }
+  ],
+  "Undang Undang Lalu Lintas": [
+    { "id": "4.1", "desc": "Tidak Melengkapi Atribut Berkendara", "denda": 10000, "penjara": 0, "hukumanLain": "-" },
+    { "id": "4.2", "desc": "Berkendara Tidak Sesuai Medan", "denda": 25000, "penjara": 0, "hukumanLain": "-" },
+    { "id": "4.3", "desc": "Memodifikasi Kendaraan Tidak Sesuai", "denda": 50000, "penjara": 0, "hukumanLain": "-" },
+    { "id": "4.4", "desc": "Parkir Ilegal/Trotoar", "denda": 5000, "penjara": 0, "hukumanLain": "-" },
+    { "id": "4.5", "desc": "Ugal Ugalan Saat Berkendara", "denda": 10000, "penjara": 0, "hukumanLain": "-" },
+    { "id": "4.6", "desc": "Menghambat Arus Lalu Lintas", "denda": 10000, "penjara": 0, "hukumanLain": "-" },
+    { "id": "4.7", "desc": "Tidak Mematuhi Rambu Lalu Lintas", "denda": 10000, "penjara": 0, "hukumanLain": "-" },
+    { "id": "4.8", "desc": "Mengemudi Tanpa SIM", "denda": 10000, "penjara": 0, "hukumanLain": "Kendaraan Disita" },
+    { "id": "4.9", "desc": "Tidak Memiliki STNK/BPKB", "denda": 10000, "penjara": 0, "hukumanLain": "Kendaraan Disita" },
+    { "id": "4.10", "desc": "Melebihi Kecepatan di Area Perumahan (80KMH)", "denda": 5000, "penjara": 0, "hukumanLain": "-" },
+    { "id": "4.11", "desc": "Melebihi Kecepatan di Area Perkotaan (150KMH)", "denda": 10000, "penjara": 0, "hukumanLain": "-" },
+    { "id": "4.12", "desc": "Melebihi Kecepatan di Area Tol (200KMH)", "denda": 15000, "penjara": 0, "hukumanLain": "-" }
+  ]
+}
